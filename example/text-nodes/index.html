@@ -1,10 +1,10 @@
 <head>
   <style> body { margin: 0; } </style>
 
-  <script src="//unpkg.com/three"></script>
-  <script src="//unpkg.com/three-spritetext"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+  <script src="https://unpkg.com/three-spritetext@1.8.1/dist/three-spritetext.min.js"></script>
 
-  <script src="//unpkg.com/3d-force-graph"></script>
+  <script src="https://unpkg.com/3d-force-graph@1.71.4/dist/3d-force-graph.min.js"></script>
   <!--<script src="../../dist/3d-force-graph.js"></script>-->
 </head>
 
@@ -14,7 +14,7 @@
   <script>
     const Graph = ForceGraph3D()
       (document.getElementById('3d-graph'))
-        .jsonUrl('../datasets/miserables.json')
+        .jsonUrl('http://127.0.0.1:8887/miserables.json')
         .nodeAutoColorBy('group')
         .nodeThreeObject(node => {
           const sprite = new SpriteText(node.id);
