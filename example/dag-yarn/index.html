@@ -1,14 +1,14 @@
 <head>
   <style> body { margin: 0; } </style>
 
-  <script src="https://bundle.run/@yarnpkg/lockfile@1.1.0"></script>
-  <script src="https://unpkg.com/dat.gui@0.7.9/build/dat.gui.js"></script>
-  <script src="https://unpkg.com/d3-octree"></script>
-  <script src="https://unpkg.com/d3-force-3d"></script>
-  <script async src="https://unpkg.com/three@0.152.2/build/three.js"></script>
-  <script src="https://unpkg.com/three-spritetext@1.8.1/dist/three-spritetext.min.js"></script>
+  <script src="//bundle.run/@yarnpkg/lockfile@1.1.0"></script>
+  <script src="//unpkg.com/dat.gui"></script>
+  <script src="//unpkg.com/d3-octree"></script>
+  <script src="//unpkg.com/d3-force-3d"></script>
+  <script src="//unpkg.com/three"></script>
+  <script src="//unpkg.com/three-spritetext"></script>
 
-  <script src="https://unpkg.com/3d-force-graph"></script>
+  <script src="//unpkg.com/3d-force-graph"></script>
   <!--<script src="../../dist/3d-force-graph.js"></script>-->
 </head>
 
@@ -42,7 +42,7 @@
       .d3AlphaDecay(0.02)
       .d3VelocityDecay(0.3);
 
-    fetch('../datasets/d3-dependencies.csv', {mode:"no-cors"})
+    fetch('../../yarn.lock')
       .then(r => r.text())
       .then(text => {
         const yarnlock = _yarnpkg_lockfile.parse(text);
