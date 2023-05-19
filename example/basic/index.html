@@ -2,6 +2,7 @@
   <style> body { margin: 0; } </style>
 
   <script src="//unpkg.com/3d-force-graph"></script>
+  <script src="//unpkg.com/dat.gui"></script>
   <!--<script src="../../dist/3d-force-graph.js"></script>-->
 </head>
 
@@ -24,5 +25,17 @@
     const Graph = ForceGraph3D()
       (document.getElementById('3d-graph'))
         .graphData(gData);
+
+    gui = new dat.GUI();
+    var text = {
+      Nodes: "Nodes"
+    }
+
+    var d = [];
+    for (let i = 0; i < gData.nodes.length; i++) {
+      d[i] = gData.nodes[i].id;
+    }
+    const contOne = gui.add(text, 'Nodes', d);
+    
   </script>
 </body>
