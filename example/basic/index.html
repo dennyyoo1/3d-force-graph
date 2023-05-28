@@ -98,15 +98,10 @@
     }
 
     function updateDropdownOptions() {
-      console.log(dropdown.dropdownOptions);
-      dropdownOptions.Node = 'null';
-      const nodeIds = Graph.graphData().nodes.map(node => node.id);
-      dropdownOptions.Node = nodeIds.reduce((options, nodeId) => {
-        options[nodeId] = nodeId.toString();
-        return options;
-      }, {});
-      console.log(dropdownOptions.Node);
-      dropdown.updateDisplay();
+      var updateController = dropdown.__controllers[0];
+      updateController.remove();
+      const nodeIds = gData.nodes.map(node => node.id);
+      dropdown.add(dropdownOptions, 'Node', nodeIds).onChange(updateNodeHighlight);
     }
 
   </script>
