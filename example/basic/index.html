@@ -21,6 +21,8 @@
           target: Math.round(Math.random() * (id-1))
         }))
     };
+    
+    console.log(gData);
 
     gData.links.forEach(link => {
       const a = gData.nodes[link.source];
@@ -51,10 +53,12 @@
         .nodeLabel('id');
 
     const gui = new dat.GUI();
-    const dropdown = gui.addFolder('Highlight Node');
+    const dropdown = gui.addFolder('Node Options');
     const nodeIds = gData.nodes.map(node => node.id);
-    const dropdownOptions = { Node: 'null' };
+    const dropdownOptions = { Node: 'null', Add_Node: 'Node ID, Node Target' };
     const controller = dropdown.add(dropdownOptions, 'Node', nodeIds).onChange(updateNodeHighlight);
+    const controller2 = dropdown.add(dropdownOptions, 'Add_Node').onFinishChange(addNode);
+    
 
     function removeNode(node) {
       let { nodes, links } = Graph.graphData();
@@ -66,6 +70,39 @@
       resetHighlight(); // Reset highlighted nodes
       updateDropdownOptions(); // Update dropdown options
       controller.setValue("null"); // Reset dropdown value
+    }
+
+    function addNode() {
+      console.log(Graph.graphData());
+
+      const { nodes, links } = Graph.graphData();
+      const data = dropdown.__controllers[1].getValue().split(",");
+      const id = parseInt(data[0]);
+      const tg = parseInt(data[1]);
+      console.log("here");
+      Graph.graphData({
+        nodes: [...nodes, { id }],
+        links: [...links, { source: id, target: tg }]
+      });
+
+      links.forEach(link => {
+      const a = gData.nodes[link.source];
+      const b = gData.nodes[link.target];
+      !a.neighbors && (a.neighbors = []);
+      !b.neighbors && (b.neighbors = []);
+      a.neighbors.push(b);
+      b.neighbors.push(a);
+
+      !a.links && (a.links = []);
+      !b.links && (b.links = []);
+      a.links.push(link);
+      b.links.push(link);
+      });
+
+      console.log(Graph.graphData());
+      updateDropdownOptions();
+      var text = "Node ID, Node Target";
+      controller2.setValue(text);
     }
 
     function updateNodeHighlight(selectedNodeId) {
@@ -98,9 +135,16 @@
     }
 
     function updateDropdownOptions() {
-      var updateController = dropdown.__controllers[0];
+      var updateController;
+      for (cont in dropdown.__controllers) {
+        if (dropdown.__controllers[cont].property == 'Node') {
+          console.log(dropdown.__controllers[cont].property);
+          updateController = dropdown.__controllers[cont];
+        }
+      }
       updateController.remove();
-      const nodeIds = gData.nodes.map(node => node.id);
+      let { nodes, links } = Graph.graphData();
+      const nodeIds = nodes.map(node => node.id);
       dropdown.add(dropdownOptions, 'Node', nodeIds).onChange(updateNodeHighlight);
     }
 
