@@ -22,33 +22,13 @@
         }))
     };
     
-    console.log(gData);
-
-    gData.links.forEach(link => {
-      const a = gData.nodes[link.source];
-      const b = gData.nodes[link.target];
-      !a.neighbors && (a.neighbors = []);
-      !b.neighbors && (b.neighbors = []);
-      a.neighbors.push(b);
-      b.neighbors.push(a);
-
-      !a.links && (a.links = []);
-      !b.links && (b.links = []);
-      a.links.push(link);
-      b.links.push(link);
-    });
-
     const highlightNodes = new Set();
-    const highlightLinks = new Set();
     let hoverNode = null;
 
     const Graph = ForceGraph3D()
       (document.getElementById('3d-graph'))
         .graphData(gData)
         .nodeColor(node => highlightNodes.has(node) ? node === hoverNode ? 'rgb(255,0,0,1)' : 'rgba(255,160,0,0.8)' : 'rgba(0,255,255,0.6)')
-        .linkWidth(link => highlightLinks.has(link) ? 4 : 1)
-        .linkDirectionalParticles(link => highlightLinks.has(link) ? 4 : 0)
-        .linkDirectionalParticleWidth(4)
         .onNodeClick(removeNode)
         .nodeLabel('id');
 
@@ -66,7 +46,6 @@
       nodes.splice(node.id, 1); // Remove node
       nodes.forEach((n, idx) => { n.id = idx; }); // Reset node ids to array index
       Graph.graphData({ nodes, links });
-
       resetHighlight(); // Reset highlighted nodes
       updateDropdownOptions(); // Update dropdown options
       controller.setValue("null"); // Reset dropdown value
@@ -76,30 +55,16 @@
       console.log(Graph.graphData());
 
       const { nodes, links } = Graph.graphData();
-      const data = dropdown.__controllers[1].getValue().split(",");
+      const data = controller2.getValue().split(",");
       const id = parseInt(data[0]);
       const tg = parseInt(data[1]);
-      console.log("here");
+      
       Graph.graphData({
         nodes: [...nodes, { id }],
         links: [...links, { source: id, target: tg }]
       });
 
-      links.forEach(link => {
-      const a = gData.nodes[link.source];
-      const b = gData.nodes[link.target];
-      !a.neighbors && (a.neighbors = []);
-      !b.neighbors && (b.neighbors = []);
-      a.neighbors.push(b);
-      b.neighbors.push(a);
-
-      !a.links && (a.links = []);
-      !b.links && (b.links = []);
-      a.links.push(link);
-      b.links.push(link);
-      });
-
-      console.log(Graph.graphData());
+      resetHighlight();
       updateDropdownOptions();
       var text = "Node ID, Node Target";
       controller2.setValue(text);
@@ -107,14 +72,11 @@
 
     function updateNodeHighlight(selectedNodeId) {
       highlightNodes.clear();
-      highlightLinks.clear();
-      
       if (selectedNodeId !== "null") {
-        const selectedNode = gData.nodes.find(node => node.id === Number(selectedNodeId));
+        const selectedNode = Graph.graphData().nodes.find(node => node.id === Number(selectedNodeId));
+        console.log(selectedNode);
         if (selectedNode) {
           highlightNodes.add(selectedNode);
-          selectedNode.neighbors.forEach(neighbor => highlightNodes.add(neighbor));
-          selectedNode.links.forEach(link => highlightLinks.add(link));
         }
       }
 
@@ -125,12 +87,9 @@
       // trigger update of highlighted objects in scene
       Graph
         .nodeColor(Graph.nodeColor())
-        .linkWidth(Graph.linkWidth())
-        .linkDirectionalParticles(Graph.linkDirectionalParticles());
     }
     function resetHighlight() {
       highlightNodes.clear();
-      highlightLinks.clear();
       updateHighlight();
     }
 
@@ -138,7 +97,6 @@
       var updateController;
       for (cont in dropdown.__controllers) {
         if (dropdown.__controllers[cont].property == 'Node') {
-          console.log(dropdown.__controllers[cont].property);
           updateController = dropdown.__controllers[cont];
         }
       }
