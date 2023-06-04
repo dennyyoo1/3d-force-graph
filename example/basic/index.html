@@ -3,6 +3,8 @@
 
   <script src="//unpkg.com/3d-force-graph"></script>
   <script src="//unpkg.com/dat.gui"></script>
+  <input id="myInput" type="file" style="visibility:hidden" />
+  <script type = "text/javascript" src="index.js"></script>  
   <!--<script src="../../dist/3d-force-graph.js"></script>-->
 </head>
 
@@ -10,6 +12,7 @@
   <div id="3d-graph"></div>
 
   <script>
+
     // Random tree
     const N = 5;
     const gData = {
@@ -35,9 +38,13 @@
     const gui = new dat.GUI();
     const dropdown = gui.addFolder('Node Options');
     const nodeIds = gData.nodes.map(node => node.id);
-    const dropdownOptions = { Node: 'null', Add_Node: 'Node ID, Node Target' };
+    const dropdownOptions = { Node: 'null', Add_Node: 'Node ID, Node Target'};
+
+    var obj = { add:function(){ saveFile(Graph.graphData()) }};
+
     const controller = dropdown.add(dropdownOptions, 'Node', nodeIds).onChange(updateNodeHighlight);
     const controller2 = dropdown.add(dropdownOptions, 'Add_Node').onFinishChange(addNode);
+    gui.add(obj,'add');
     
 
     function removeNode(node) {
