@@ -4,7 +4,7 @@
   <script src="//unpkg.com/3d-force-graph"></script>
   <script src="//unpkg.com/dat.gui"></script>
   <input id="myInput" type="file" style="visibility:hidden" />
-  <script type = "text/javascript" src="index.js"></script>  
+  <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
   <!--<script src="../../dist/3d-force-graph.js"></script>-->
 </head>
 
@@ -40,11 +40,24 @@
     const nodeIds = gData.nodes.map(node => node.id);
     const dropdownOptions = { Node: 'null', Add_Node: 'Node ID, Node Target'};
 
-    var obj = { add:function(){ saveFile(Graph.graphData()) }};
+    function saveFile(data) {
+      var currentdate = new Date(); 
+      var datetime = "Last Save: " + currentdate.getDate() + "/"
+                      + (currentdate.getMonth()+1)  + "/" 
+                      + currentdate.getFullYear() + " @ "  
+                      + currentdate.getHours() + ":"  
+                      + currentdate.getMinutes() + ":" 
+                      + currentdate.getSeconds();
+      var input = JSON.stringify(data)
+      var blob = new Blob([input], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, datetime + ".json");
+    }
 
-    const controller = dropdown.add(dropdownOptions, 'Node', nodeIds).onChange(updateNodeHighlight);
-    const controller2 = dropdown.add(dropdownOptions, 'Add_Node').onFinishChange(addNode);
-    gui.add(obj,'add');
+    var obj = { Save_Data:function(){ saveFile(Graph.graphData()) }};
+
+    const controller = dropdown.add(dropdownOptions, 'Node', nodeIds).onChange(updateNodeHighlight).name("Highlight Node");
+    const controller2 = dropdown.add(dropdownOptions, 'Add_Node').onFinishChange(addNode).name("Add Node");
+    gui.add(obj,'Save_Data').name("Click to save data");
     
 
     function removeNode(node) {
@@ -110,7 +123,7 @@
       updateController.remove();
       let { nodes, links } = Graph.graphData();
       const nodeIds = nodes.map(node => node.id);
-      dropdown.add(dropdownOptions, 'Node', nodeIds).onChange(updateNodeHighlight);
+      dropdown.add(dropdownOptions, 'Node', nodeIds).onChange(updateNodeHighlight).name("Highlight Node");
     }
 
   </script>
